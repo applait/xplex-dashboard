@@ -11,7 +11,7 @@
     <div class="main container is-widescreen">
       <img class="xplex-logo" src="/img/logo.png">
       <h1>Welcome to xplex dashboard!</h1>
-      <a class="button is-link is-rounded is-large">
+      <a class="button is-link is-rounded is-large" href="/login">
         <span>Come on in</span>
         <span class="icon">
           <i class="mdi mdi-arrow-right mdi-24px"></i>
