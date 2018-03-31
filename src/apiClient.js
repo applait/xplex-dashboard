@@ -6,13 +6,14 @@ import axios from 'axios'
  * @see https://github.com/applait/xplex-rig/blob/master/HTTP-API-v1.md
  * @param {object} [config={}] - Configuration object for the API client.
  * @param {string} [config.baseUrl='https://rig.xplex.me'] - Base URL of rig's HTTP Server.
+ * @param {string} [config.token] - Pass an authorization token if there is one already.
  * @constructor
  * @example
  * var client = new APIClient({ baseURL: 'https://rig-dev.xplex.online' })
  * client.login('foobar', 'fluffy123').then(loginSuccess).catch(loginError)
  */
 function APIClient (config = {}) {
-  this._token = ''
+  this._token = config.token || ''
   this._httpClient = axios.create({
     baseURL: config.baseUrl || 'https://rig.xplex.me',
     timeout: 3000,
