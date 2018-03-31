@@ -85,6 +85,17 @@ APIClient.prototype.register = function register (username, password, email) {
 }
 
 /**
+ * Change a logged in user's password. This is not the forgot password method.
+ *
+ * @param {string} oldPassword - Current password of the user
+ * @param {string} newPassword - New password to replace with.
+ * @return {Promise} Resolves to user information if password was successfully changed
+ */
+APIClient.prototype.changePassword = function register (oldPassword, newPassword) {
+  return this.request('/accounts/password', 'post', { oldPassword, newPassword }, true)
+}
+
+/**
  * Get list of streams configured for current user. Requires authentication.
  *
  * @return {Promise} Resolves to streams info, if available
