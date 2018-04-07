@@ -6,20 +6,20 @@
           <figure class="avatar">
             <img class="xplex-logo" src="/img/logo.png">
           </figure>
-          <form>
+          <form @submit.prevent="login()">
             <div class="field">
               <div class="control has-icons-left">
-                <input class="input is-large" type="email" placeholder="Username" autofocus="">
+                <input class="input is-large" v-model="username" type="text" placeholder="Username" autofocus="">
                 <span class="icon is-left"><i class="mdi mdi-account"></i></span>
               </div>
             </div>
             <div class="field">
               <div class="control has-icons-left">
-                <input class="input is-large" type="password" placeholder="Password">
+                <input class="input is-large" v-model="password" type="password" placeholder="Password">
                 <span class="icon is-left"><i class="mdi mdi-key"></i></span>
               </div>
             </div>
-            <button class="button is-block is-link is-large is-fullwidth" v-on:click.stop.prevent="goToProfile()">Login</button>
+            <button class="button is-block is-link is-large is-fullwidth" type="submit">Login</button>
           </form>
         </div>
       </div>
@@ -28,10 +28,23 @@
 </template>
 
 <script>
+import API from '../api'
+var api = new API()
+
 export default {
   name: 'Login',
+  data: function () {
+    return {
+      username: '',
+      password: ''
+    }
+  },
   methods: {
-    goToProfile: function () { location.assign('/profile') }
+    login: function () {
+      api.login(this.username, this.password)
+        .then((d) => location.assign('/profile'))
+        .catch((e) => this.$toast.open(e.message))
+    }
   }
 }
 </script>

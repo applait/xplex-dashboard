@@ -11,11 +11,11 @@ import axios from 'axios'
  */
 function API () {
   this._httpClient = axios.create({
-    baseURL: config.baseUrl || 'https://rig.xplex.me',
+    baseURL: 'https://rig-dev.xplex.online',
     timeout: 3000,
     headers: {
       'Content-type': 'application/json',
-      'Authorization': (!!localStorage.authToken ? ('Bearer ' + localStorage.authToken) : '')
+      'Authorization': (localStorage.authToken ? ('Bearer ' + localStorage.authToken) : '')
     }
   })
 }
@@ -31,6 +31,7 @@ function API () {
  * @return {Promise} - Promise that resolves to payload sent from rig.
  */
 API.prototype.request = function request (url, method, data, headers) {
+  headers = Object.assign(this._httpClient.defaults.headers, headers)
   return this._httpClient({ url, method, data, headers })
     .then(function (res) {
       if (res.data && res.data.payload) {
@@ -51,9 +52,10 @@ API.prototype.request = function request (url, method, data, headers) {
  * @return {Promise} Resolves to user information if login was successful
  */
 API.prototype.login = function login (username, password) {
-  return this.request('/accounts/auth/local', 'post', { username, password }, false)
+  return this.request('/accounts/auth/local', 'post', { username, password })
     .then(payload => {
-      localStorage.authToken = payload.token
+      localStorage.setItem('authToken', payload.token)
+      localStorage.setItem('currentUser', payload.username)
       return Promise.resolve(payload)
     })
 }
@@ -67,7 +69,7 @@ API.prototype.login = function login (username, password) {
  * @return {Promise} Resolves to user information if account was created successfully
  */
 API.prototype.register = function register (username, password, email) {
-  return this.request('/accounts/', 'post', { username, password, email }, false)
+  return this.request('/accounts/', 'post', { username, password, email })
 }
 
 /**
@@ -78,7 +80,7 @@ API.prototype.register = function register (username, password, email) {
  * @return {Promise} Resolves to user information if password was successfully changed
  */
 API.prototype.changePassword = function register (oldPassword, newPassword) {
-  return this.request('/accounts/password', 'post', { oldPassword, newPassword }, true)
+  return this.request('/accounts/password', 'post', { oldPassword, newPassword })
 }
 
 /**
@@ -135,4 +137,4 @@ API.prototype.streamChangeKey = function streamChangeKey (streamId) {
 }
 
 // export the API
-module.exports = API
+export default API

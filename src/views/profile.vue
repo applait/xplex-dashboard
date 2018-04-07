@@ -16,7 +16,7 @@
         </div>
         <div class="level-right has-text-left-desktop">
           <div class="content">
-            <p class="heading">Username</p>
+            <p class="heading">{{ username }}</p>
             <p class="title has-text-grey">email@id</p>
             <button class="button is-link is-outlined">Change Password</button>
           </div>
@@ -88,7 +88,12 @@
 
 <script>
 export default {
-  name: 'Profile'
+  name: 'Profile',
+  data: () => {
+    return {
+      username: localStorage.getItem('currentUser')
+    }
+  }
 }
 </script>
 
