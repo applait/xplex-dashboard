@@ -48,27 +48,12 @@
           <p class="panel-heading">
             Existing Stream Ingestions
           </p>
-          <a class="panel-block">
+          <p v-for='(ingest, index) in ingestions' :key='index' class="panel-block">
             <span class="panel-icon">
-              <i class="mdi mdi-youtube-gaming"></i>
+              <i class="mdi" v-bind:class="mdiServiceIcon(ingest.srv)"></i>
             </span>
-            rtmp://a.rtmp.youtube.com/live/xyz
-            <!-- <button class="delete"></button> -->
-          </a>
-          <a class="panel-block">
-            <span class="panel-icon">
-              <i class="mdi mdi-twitch"></i>
-            </span>
-            rtmp://live.twitch.tv/app/xyz
-            <!-- <button class="delete"></button> -->
-          </a>
-          <a class="panel-block">
-            <span class="panel-icon">
-              <i class="mdi mdi-link"></i>
-            </span>
-            rtmp://live.custom.url/xyz
-            <!-- <button class="delete"></button> -->
-          </a>
+             {{ ingest.url }}
+          </p>
         </div>
         <div class="field has-addons has-addons-centered">
           <p class="control">
@@ -87,13 +72,46 @@
 </template>
 
 <script>
+import API from '../api'
+var api = new API()
+
 export default {
   name: 'Profile',
   data: () => {
     return {
-      username: localStorage.getItem('currentUser')
+      username: localStorage.getItem('currentUser'),
+      streamID: localStorage.getItem('streamID'),
+      streamKey: localStorage.getItem('streamKey'),
+      ingestions: JSON.parse(localStorage.getItem('ingestions'))
     }
-  }
+  },
+  methods: {
+    mdiServiceIcon: (service) => {
+      switch (service) {
+        case 'YouTube':
+          return 'mdi-youtube-gaming'
+        case 'Twitch':
+          return 'mdi-twitch'
+        default:
+          return 'mdi-link'
+      }
+    }
+  },
+  created: () => api.streamList().then((d1) => {
+    localStorage.setItem('streamID', d1[0]['id'])
+    localStorage.setItem('streamKey', d1[0]['streamKey'])
+
+    api.streamDetail(localStorage.getItem('streamID')).then((d2) => {
+      let destinations = []
+      for (var i of d2.destinations) {
+        destinations.push({
+          srv: i.service,
+          url: i.rtmpUrl
+        })
+      }
+      localStorage.setItem('ingestions', JSON.stringify(destinations))
+    })
+  })
 }
 </script>
 
